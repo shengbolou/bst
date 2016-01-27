@@ -1,5 +1,5 @@
-#include "stdio.h"
-#include "stdlib.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 //create the struct for bst
 typedef struct bst_t{
@@ -18,7 +18,6 @@ bst_t* bst_insert(bst_t *tree,int data){
       root->parent = NULL;
       root->leftnode = NULL;
       root->rightnode = NULL;
-      return root;
     }
     else{
       //if the data is greater than the data of root
@@ -32,7 +31,6 @@ bst_t* bst_insert(bst_t *tree,int data){
           node->parent = tree;
           node->leftnode = NULL;
           node->rightnode = NULL;
-          return node;
         }
         else{
            bst_insert(tree->rightnode,data);
@@ -50,7 +48,6 @@ bst_t* bst_insert(bst_t *tree,int data){
           node->parent = tree;
           node->leftnode = NULL;
           node->rightnode = NULL;
-          return node;
         }
         else{
           bst_insert(tree->leftnode,data);
@@ -73,48 +70,58 @@ int bst_find(bst_t *tree, int data, int* found){
     //if the data is greater than the data of root
     //check if it's leaf, if yes, means not found
     //if not, bst_find(rightnode,data,found)
-    if(data > (tree->data)){
+    else if(data > (tree->data)){
       if(tree->rightnode == NULL){
         *found = 0;
          return -1;
       }
-      bst_find(tree->rightnode,data,found);
+      return bst_find(tree->rightnode,data,found);
     }
     //if the data is less than the data of root
     //check if it's leaf, if yes, means not found
     //if not, bst_find(leftnode,data,found)
-    if(data < (tree->data)){
+    else if(data < (tree->data)){
       if(tree->leftnode == NULL){
         *found = 0;
          return -1;
       }
-      bst_find(tree->leftnode,data,found);
+      return bst_find(tree->leftnode,data,found);
     }
 }
 
 
-int bst_delete(bst_t* tree, int data){
+void bst_delete(bst_t* tree, int data){
   //if root is null,do nothing
   if(tree == NULL){
-    return -1;
+    return;
   }
+  //if the tree's data is larger than data
+  //means it must be at left branch of root
+  //do bst_delete(tree->leftnode,data)
   if((tree->data) > data){
     bst_delete(tree->leftnode,data);
   }
+  //if the tree's data is small than data
+  //means it must be at right branch of root
+  //do bst_delete(tree->rightnode,data)
   else if((tree->data) < data){
     bst_delete(tree->rightnode,data);
   }
   else{
+    //if tree has two children
     if((tree->leftnode!=NULL) && (tree->rightnode != NULL)){
       bst_t *tmp = tree->leftnode;
+      //go to the largest node at its left branch
       while (tmp->rightnode != NULL) {
         tmp = tmp->rightnode;
       }
+      //exchange the value
       tree->data = tmp-> data;
       if(tmp->leftnode != NULL){
         (tmp->parent) -> rightnode = tmp->leftnode;
         (tmp->leftnode) -> parent = tmp->parent;
       }
+      //remove the node
       else{
         tmp->leftnode = NULL;
         tmp->rightnode = NULL;
@@ -127,7 +134,9 @@ int bst_delete(bst_t* tree, int data){
        }
       }
     }
+    //if tree only has left child
     else if(tree->leftnode != NULL){
+      //connect it's chind with its parent
       bst_t *tmp = tree->leftnode;
       if((tree->parent)->leftnode == tree){
         (tree->parent)->leftnode = tmp;
@@ -137,11 +146,14 @@ int bst_delete(bst_t* tree, int data){
         (tree->parent)->rightnode = tmp;
         tmp->parent = tree->parent;
       }
+      //remove the node
       tree->leftnode = NULL;
       tree->rightnode = NULL;
       tree->parent = NULL;
     }
+    //if tree only has right child
     else if(tree->rightnode != NULL){
+      //connect its child with its parent
       bst_t *tmp = tree->rightnode;
       if((tree->parent)->leftnode == tree){
         (tree->parent)->leftnode = tmp;
@@ -151,11 +163,14 @@ int bst_delete(bst_t* tree, int data){
         (tree->parent)->rightnode = tmp;
         tmp->parent = tree->parent;
       }
+      //remove the node
       tree->leftnode = NULL;
       tree->rightnode = NULL;
       tree->parent = NULL;
     }
+    //if tree is a leaf
     else{
+      //just simply remove it
       if((tree->parent)->leftnode == tree){
         (tree->parent)->leftnode = NULL;
 
@@ -166,7 +181,6 @@ int bst_delete(bst_t* tree, int data){
      tree->parent = NULL;
     }
   }
-
 }
 
 
@@ -174,38 +188,85 @@ int bst_delete(bst_t* tree, int data){
 
 int main(){
 
-  bst_t *root =  (bst_t*) malloc(sizeof(bst_t));
-  root->data = 9;
-  root->parent = NULL;
-  root->leftnode = NULL;
-  root->rightnode = NULL;
+   //create a root
+   bst_t *root =  (bst_t*) malloc(sizeof(bst_t));
+   root->data = 9;
+   root->parent = NULL;
+   root->leftnode = NULL;
+   root->rightnode = NULL;
 
-   bst_t *one = bst_insert(root,7);
-   bst_t *two = bst_insert(root,10);
-   bst_t *three = bst_insert(root,6);
-   bst_t *four = bst_insert(root,8);
-   bst_t *five = bst_insert(root,12);
-   bst_t *six = bst_insert(root,11);
+  // insert node
+   bst_t* one = bst_insert(root,7);
+   bst_t* two =bst_insert(root,10);
+   bst_t* three =bst_insert(root,6);
+   bst_t* four =bst_insert(root,8);
+   bst_t* five=bst_insert(root,12);
+   bst_t* six=bst_insert(root,11);
+   bst_t* seven =bst_insert(root,13);
 
-  //  int* find = (int*)malloc(sizeof(int));
-   //
-  //  int get = bst_find(root,10,find);
+   int* find = (int*)malloc(sizeof(int));
 
-   int delete = 0;
+   int get = bst_find(root,13,find);
 
-   delete = bst_delete(root,7);
-   delete = bst_delete(root,6);
+   printf("Should return 13 if 13 exists: %i\n", get);
 
-   bst_t* removed = root->leftnode;
+   //delete 12,11 and 10
+   //right branch
+   bst_delete(root,10);
 
-   printf("%i\n", removed->data);
+   bst_t* removed = root->rightnode;
+   int result  = bst_find(root,10,find);
+   printf("The right child of root now should be 12 :%i\n", removed->data);
+   printf("Should return -1 since 10 is removed: %i\n", result);
 
+   bst_delete(root,12);
+   removed = root->rightnode;
+   result  = bst_find(root,12,find);
+   printf("The right child of root now should be 11 :%i\n", removed->data);
+   printf("Should return -1 since 12 is removed: %i\n", result);
+
+   bst_delete(root,11);
+
+   removed = root->rightnode;
+   result  = bst_find(root,11,find);
+   printf("The right child of root now should be 13 :%i\n", removed->data);
+   printf("Should return -1 since 11 is removed: %i\n", result);
+
+
+
+
+  //delete 7,6
+  //left branch
+   bst_delete(root,7);
+   removed = root->leftnode;
+   result  = bst_find(root,7,find);
+   printf("The left child of root now should be 6 :%i\n", removed->data);
+   printf("Should return -1 since 7 is removed: %i\n", result);
+
+   bst_delete(root,6);
+   removed = root->leftnode;
+   result  = bst_find(root,6,find);
+   printf("The left child of root now should be 8 :%i\n", removed->data);
+   printf("Should return -1 since 6 is removed: %i\n", result);
+
+   //delete the root, now the root should be 8
+   bst_delete(root,9);
+   removed = root->rightnode;
+   result  = bst_find(seven,9,find);
+   printf("The root should be 8: %i\n", root->data);
+   printf("The right child of root now should be 12 :%i\n", removed->data);
+   printf("Should return -1 since 9 is removed: %i\n", result);
+
+
+   //free everything
    free(one);
    free(two);
    free(three);
    free(four);
    free(five);
    free(six);
+   free(seven);
    free(root);
+   free(find);
 
 }
