@@ -34,7 +34,9 @@ bst_t* bst_insert(bst_t *tree,int data){
           node->rightnode = NULL;
           return node;
         }
-        bst_insert(tree->rightnode,data);
+        else{
+           bst_insert(tree->rightnode,data);
+        }
 
       }
       else{
@@ -50,7 +52,9 @@ bst_t* bst_insert(bst_t *tree,int data){
           node->rightnode = NULL;
           return node;
         }
-        bst_insert(tree->leftnode,data);
+        else{
+          bst_insert(tree->leftnode,data);
+        }
       }
     }
 }
@@ -94,32 +98,73 @@ int bst_delete(bst_t* tree, int data){
   if(tree == NULL){
     return -1;
   }
-  //if found, go to the smallest node in the right branch
-  //so set the leftnode of its rightnode to its leftnode
-  //and set both its leftnode and rightnode to NULL
-  if((tree->data) == data){
-    (tree->rightnode)->leftnode = tree->leftnode;
-    tree->leftnode = NULL;
-    tree->rightnode = NULL;
-    return 1;
+  if((tree->data) > data){
+    bst_delete(tree->leftnode,data);
   }
-  //if the data is greater than the data of root
-  //check if it's leaf, if yes, means not found
-  //if not, bst_delete(rightnode,data)
-  if(data > (tree->data)){
-    if(tree->rightnode == NULL){
-      return -1;
-    }
+  else if((tree->data) < data){
     bst_delete(tree->rightnode,data);
   }
-  //if the data is less than the data of root
-  //check if it's leaf, if yes, means not found
-  //if not, bst_delete(leftnode,data,found)
-  if(data < (tree->data)){
-    if(tree->leftnode == NULL){
-      return -1;
+  else{
+    if((tree->leftnode!=NULL) && (tree->rightnode != NULL)){
+      bst_t *tmp = tree->leftnode;
+      while (tmp->rightnode != NULL) {
+        tmp = tmp->rightnode;
+      }
+      tree->data = tmp-> data;
+      if(tmp->leftnode != NULL){
+        (tmp->parent) -> rightnode = tmp->leftnode;
+        (tmp->leftnode) -> parent = tmp->parent;
+      }
+      else{
+        tmp->leftnode = NULL;
+        tmp->rightnode = NULL;
+        tmp->parent = NULL;
+        if(tree->leftnode == tmp){
+          tree->leftnode = NULL;
+        }
+        else{
+          tree->rightnode = NULL;
+       }
+      }
     }
-    bst_delete(tree->leftnode,data);
+    else if(tree->leftnode != NULL){
+      bst_t *tmp = tree->leftnode;
+      if((tree->parent)->leftnode == tree){
+        (tree->parent)->leftnode = tmp;
+        tmp->parent = tree->parent;
+      }
+      else{
+        (tree->parent)->rightnode = tmp;
+        tmp->parent = tree->parent;
+      }
+      tree->leftnode = NULL;
+      tree->rightnode = NULL;
+      tree->parent = NULL;
+    }
+    else if(tree->rightnode != NULL){
+      bst_t *tmp = tree->rightnode;
+      if((tree->parent)->leftnode == tree){
+        (tree->parent)->leftnode = tmp;
+        tmp->parent = tree->parent;
+      }
+      else{
+        (tree->parent)->rightnode = tmp;
+        tmp->parent = tree->parent;
+      }
+      tree->leftnode = NULL;
+      tree->rightnode = NULL;
+      tree->parent = NULL;
+    }
+    else{
+      if((tree->parent)->leftnode == tree){
+        (tree->parent)->leftnode = NULL;
+
+      }
+      else{
+        (tree->parent)->rightnode = NULL;
+     }
+     tree->parent = NULL;
+    }
   }
 
 }
@@ -135,17 +180,32 @@ int main(){
   root->leftnode = NULL;
   root->rightnode = NULL;
 
-   bst_t *result  = bst_insert(root,10);
+   bst_t *one = bst_insert(root,7);
+   bst_t *two = bst_insert(root,10);
+   bst_t *three = bst_insert(root,6);
+   bst_t *four = bst_insert(root,8);
+   bst_t *five = bst_insert(root,12);
+   bst_t *six = bst_insert(root,11);
 
-   int* find = (int*)malloc(sizeof(int));
+  //  int* find = (int*)malloc(sizeof(int));
+   //
+  //  int get = bst_find(root,10,find);
 
-   int get = bst_find(root,10,find);
+   int delete = 0;
 
-   int remove = bst_delete(root,10);
+   delete = bst_delete(root,7);
+   delete = bst_delete(root,6);
 
-   printf("%i\n", remove);
+   bst_t* removed = root->leftnode;
 
-   free(result);
+   printf("%i\n", removed->data);
+
+   free(one);
+   free(two);
+   free(three);
+   free(four);
+   free(five);
+   free(six);
    free(root);
 
 }
