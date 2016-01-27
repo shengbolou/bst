@@ -3,9 +3,6 @@
 
 Binary Search Tree in c
 
-Shengbo Lou
-28530995
-1/27/2016
 
 1. struct bst_t has four fields: data, three bst_t pointers: its parent, leftnode and rightnode.(Using typedef makes my life easier)
 
