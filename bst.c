@@ -10,7 +10,7 @@ typedef struct bst_t{
 } bst_t;
 
 
-bst_t* bst_insert(bst_t *tree,int data){
+void bst_insert(bst_t *tree,int data){
     //if the tree is null, then create a root node with the data
     if(tree == NULL){
       bst_t *root = (bst_t*)malloc(sizeof(bst_t));
@@ -133,12 +133,16 @@ void bst_delete(bst_t* tree, int data){
           tree->rightnode = NULL;
        }
       }
+      free(tmp);
     }
     //if tree only has left child
     else if(tree->leftnode != NULL){
       //connect it's chind with its parent
       bst_t *tmp = tree->leftnode;
-      if((tree->parent)->leftnode == tree){
+      if(tree->parent == NULL){
+        tmp->parent = NULL;
+      }
+      else if((tree->parent)->leftnode == tree){
         (tree->parent)->leftnode = tmp;
         tmp->parent = tree->parent;
       }
@@ -150,12 +154,16 @@ void bst_delete(bst_t* tree, int data){
       tree->leftnode = NULL;
       tree->rightnode = NULL;
       tree->parent = NULL;
+      free(tree);
     }
     //if tree only has right child
     else if(tree->rightnode != NULL){
       //connect its child with its parent
       bst_t *tmp = tree->rightnode;
-      if((tree->parent)->leftnode == tree){
+      if(tree->parent == NULL){
+        tmp->parent = NULL;
+      }
+      else if((tree->parent)->leftnode == tree){
         (tree->parent)->leftnode = tmp;
         tmp->parent = tree->parent;
       }
@@ -167,18 +175,25 @@ void bst_delete(bst_t* tree, int data){
       tree->leftnode = NULL;
       tree->rightnode = NULL;
       tree->parent = NULL;
+      free(tree);
     }
     //if tree is a leaf
     else{
       //just simply remove it
-      if((tree->parent)->leftnode == tree){
+      if(tree->parent == NULL){
+        free(tree);
+        tree = NULL;
+      }
+      else if((tree->parent)->leftnode == tree){
         (tree->parent)->leftnode = NULL;
-
+        tree->parent = NULL;
+        free(tree);
       }
       else{
         (tree->parent)->rightnode = NULL;
-     }
-     tree->parent = NULL;
+        tree->parent = NULL;
+        free(tree);
+      }
     }
   }
 }
@@ -196,13 +211,13 @@ int main(){
    root->rightnode = NULL;
 
   // insert node
-   bst_t* one = bst_insert(root,7);
-   bst_t* two =bst_insert(root,10);
-   bst_t* three =bst_insert(root,6);
-   bst_t* four =bst_insert(root,8);
-   bst_t* five=bst_insert(root,12);
-   bst_t* six=bst_insert(root,11);
-   bst_t* seven =bst_insert(root,13);
+   bst_insert(root,7);
+   bst_insert(root,10);
+   bst_insert(root,6);
+   bst_insert(root,8);
+   bst_insert(root,12);
+   bst_insert(root,11);
+   bst_insert(root,13);
 
    int* find = (int*)malloc(sizeof(int));
 
@@ -252,21 +267,15 @@ int main(){
    //delete the root, now the root should be 8
    bst_delete(root,9);
    removed = root->rightnode;
-   result  = bst_find(seven,9,find);
    printf("The root should be 8: %i\n", root->data);
-   printf("The right child of root now should be 12 :%i\n", removed->data);
-   printf("Should return -1 since 9 is removed: %i\n", result);
+   printf("The right child of root now should be 13 :%i\n", removed->data);
 
 
-   //free everything
-   free(one);
-   free(two);
-   free(three);
-   free(four);
-   free(five);
-   free(six);
-   free(seven);
-   free(root);
+   //delete the rest of the nodes
+   bst_delete(root,13);
+   bst_delete(root,8);
+
+   // free *find
    free(find);
 
 }
