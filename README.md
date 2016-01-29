@@ -4,12 +4,16 @@
 Binary Search Tree in c
 
 
-1. struct bst_t has four fields: data, three bst_t pointers: its parent, leftnode and rightnode.(Using typedef makes my life easier)
+1. structs:
+   t_node is the struct for the innner nodes, it has four fields: data, three t_node pointers: its parent, leftnode and rightnode.(Using typedef makes my life easier)
+   bst_t is the struct for the actual binary Search tree, it only has one field: the root of the tree.
 
 
-2. bst_t* bst_insert(bst_t* tree, int data):
+2. void bst_insert(bst_t* tree, int data):
 
-   I make it will return the node has been created, so i can free them after I test.
+   This method uses the help method: node_insert(t_node* node, int data).
+
+   For the help method:
 
    First I check whether the root is NULL, if it's null, then create a root.
 
@@ -21,7 +25,9 @@ Binary Search Tree in c
 
 3. int bst_find(bst_t* tree, int data, int* found):
 
-   This method is the easiest one(I think).
+   This method is the easiest one(I think), it uses the help method node_find(t_node* node, int data, int* found)
+
+   For the help method:
 
    First I check if tree is NULL, if it's null, just return -1(undefined).
 
@@ -36,7 +42,9 @@ Binary Search Tree in c
 
 4. void bst_delete(bst_t* tree, int data):
 
-   Last and hardest one.
+   Last and hardest one, it uses the help method node_delete(t_node* node, int data)
+
+   For the help method:
 
    First I check if tree is NULL, if it's null, just return.
 
@@ -51,6 +59,8 @@ Binary Search Tree in c
    The complicated one is it has two children, I will take the largest one (tmp) at its left branch and make it
    root. Then if tmp has only one child or it's a leaf(if I'm lucky enough), they will be one of cases I mentioned
    before.
+
+   And I free the node at the end.
 
 
 That's it!

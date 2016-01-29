@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//create the struct for bst
+//create the struct for bst node
 typedef struct t_node{
    int data;
    struct t_node *parent;
@@ -9,13 +9,15 @@ typedef struct t_node{
    struct t_node *rightnode;
 } t_node;
 
+
+// create the struct for bst
 typedef struct bst_t{
    struct t_node *root;
 }bst_t;
 
 
 
-
+//help method node_insert
 void node_insert(t_node *tree,int data){
     //if the tree is null, then create a root node with the data
     if(tree == NULL){
@@ -62,6 +64,8 @@ void node_insert(t_node *tree,int data){
     }
 }
 
+
+//help method node_find
 int node_find(t_node *tree, int data, int* found){
     //if root is null, set found to 0 and return -1(undefined)
     if(tree == NULL){
@@ -96,6 +100,7 @@ int node_find(t_node *tree, int data, int* found){
 }
 
 
+//help method node_delete
 void node_delete(t_node* tree, int data){
   //if root is null,do nothing
   if(tree == NULL){
