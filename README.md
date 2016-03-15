@@ -1,7 +1,4 @@
-# bst
-
-
-Binary Search Tree in c
+#Binary Search Tree in c
 
 
 1. structs:
